@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SWAdventureWorks_Ceschan.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +53,38 @@ namespace SWAdventureWorks_Ceschan.Controllers
             context.Departments.Add(department); 
             context.SaveChanges();
             return Ok(); 
+
+        }
+        //
+        //
+        //-----------ADICIONALES
+        //
+        //
+        [HttpPut("{id}")]
+        public ActionResult Put(short id, [FromBody] Department department)
+        {
+            if (id != department.DepartmentId)
+            {
+                return BadRequest();
+            }
+            context.Entry(department).State = EntityState.Modified; 
+            context.SaveChanges(); 
+            return Ok();
+        }
+        [HttpDelete("{id}")]
+        public ActionResult<Department> Delete(short id)
+        {
+            var department = (from a in context.Departments
+                             where a.DepartmentId == id
+                             select a).SingleOrDefault();
+
+            if (department == null)
+            {
+                return NotFound();
+            }
+            context.Departments.Remove(department);
+            context.SaveChanges();
+            return department;
 
         }
     }
